@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Button, Col, Container, Dropdown, Form, InputGroup, Modal, Nav, NavDropdown, Navbar, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Form, InputGroup, Modal, Nav, Row, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faRightFromBracket, faEdit, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faRightFromBracket, faEdit, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/style.css";
 
@@ -17,23 +17,28 @@ export default function Master() {
   const master = [
     {
     "degeree":"Craft",
-    "Amount":"4000"
+    "Amount":"4000",
+    "Year":"2024"
   },
   {
     "degeree":"Chapter",
-    "Amount":"1000"
+    "Amount":"1000",
+    "Year":"2024"
   },
   {
     "degeree":"Mark",
-    "Amount":"1000"
+    "Amount":"1000",
+    "Year":"2024"
   },
   {
     "degeree":"RAM",
-    "Amount":"1000"
+    "Amount":"1000",
+    "Year":"2024"
   },
   {
     "degeree":"Conclave",
-    "Amount":"2000"
+    "Amount":"2000",
+    "Year":"2024"
   }
 ]
 
@@ -79,7 +84,7 @@ export default function Master() {
 
         {/* Section */}
           <Container fluid className="py-3 ">
-            <h3 className="text-center text-light fw-bold">Degree Master</h3>
+            <h3 className="text-center text-white fw-bold">Degree Master</h3>
             <div className="d-flex justify-content-end">
               <Col lg={3} md={4} sm={12}>
                 <InputGroup  className="mb-3">
@@ -95,6 +100,7 @@ export default function Master() {
                 <thead className="table-info  position-sticky top-0">
                   <tr className="">
                       <th>SI.NO</th>
+                      <th>Year</th>
                       <th>Degree</th>
                       <th>Amount</th>
                       <th>Action</th>
@@ -105,6 +111,7 @@ export default function Master() {
                     {master.map((data,index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
+                        <td>{data?.Year}</td>
                         <td>{data?.degeree}</td>
                         <td>{data?.Amount}</td>
                         {/* <td>{[

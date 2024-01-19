@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -11,7 +10,7 @@ import Addmember from './Component/Addmember';
 function App() {
   return (
     <React.StrictMode>
-      <BrowserRouter basename='/Bhartilodge/Tresurer/login'>
+      <BrowserRouter basename='/bharatilodge'>
         <Routes>
           <Route path='/' element={<Login/>} />
           <Route path='/subscription' element={<Subscription/>} />
@@ -20,6 +19,7 @@ function App() {
           <Route path='/add' element={<Addmember/>} />
         </Routes>
       </BrowserRouter>
+      <h1>hii</h1>
     </React.StrictMode>
   );
 }

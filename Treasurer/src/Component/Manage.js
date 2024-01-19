@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Col, Container, Dropdown, Form, InputGroup, Modal, Nav, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Form, InputGroup, Modal, Nav, Row, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit,faRightFromBracket, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
@@ -179,9 +179,9 @@ export default function Manage() {
 
         {/* Section */}
           <Container fluid className="py-3">
-            <h3 className="text-center text-dark fw-bold">Manage Members</h3>
+            <h3 className="text-center text-white fw-bold">Manage Members</h3>
             <Row>
-              <Col lg={3} md={3} xs={8} sm={3} className="my-2">
+              <Col lg={3} md={3} xs={8} sm={6} className="my-2">
                 <InputGroup className="">
                   <InputGroup.Text id="basic-addon1">
                   <FontAwesomeIcon icon={faSearch} />
@@ -189,7 +189,10 @@ export default function Manage() {
                   <Form.Control type="text" placeholder="Search"  className=""/>
                 </InputGroup>
               </Col>
-              <Col lg={9} md={9} sm={9} className="my-2 text-end">
+              <Col lg={2} md={2} sm={6} className="my-2">
+              <Button variant="primary" className=""><i className="fa fa-download"></i> Download</Button>
+              </Col>
+              <Col lg={7} md={7} sm={12} className="my-2 text-end">
                 <Button variant="primary" onClick={() => navigate('/add')} className=" text-nowrap">Add Member</Button>
               </Col>
             </Row>

@@ -15,7 +15,7 @@ export default function Login(){
     const gotomanage =(e)=>{
         e.preventDefault();
 
-        if (adminId == "admin" && password == "admin"){
+        if (adminId === "admin" && password === "admin"){
             navigate("/subscription")
 
         } else {
@@ -45,7 +45,7 @@ export default function Login(){
                                 <Stack  gap={3}>
                                 <h3 className="fw-bold">Tr<span className="text-decoration-underline">easurer Lo</span>gin</h3>
                                 <div className="text-center">
-                                    <img src={require("../assets/images/icon/icons8-treasury-64.png")}  width={'100px'}/>
+                                    <img src={require("../assets/images/icon/icons8-treasury-64.png")} alt="icon"  width={'100px'}/>
                                 </div>
                                 <FormGroup className="ps-5 pe-5 ">
                                     <Col>
