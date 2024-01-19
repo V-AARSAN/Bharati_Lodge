@@ -93,3 +93,11 @@
     background-color: #ffffffb7;
 }
 
+.text-size{
+    font-size: 18px;
+}
+
+.nocss {
+    position: absolute;
+    transform: translate(0, 0);
+  }

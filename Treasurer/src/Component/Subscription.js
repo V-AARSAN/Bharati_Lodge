@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Button, Col, Container, Dropdown, Form, FormGroup, InputGroup, Modal, Nav, Row, Stack, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEye, faEdit,faRightFromBracket, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {  faEdit, faEye, faRightFromBracket, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/style.css";
+import Draggable, { DraggableCore } from "react-draggable";
 
 
 export default function Subscription() {
@@ -19,33 +20,34 @@ export default function Subscription() {
   });
 
   
-  const tableData = [
-    {
-      "Year": 2023,
-      "Amount": 4000,
-      "Paid": 2000,
-      "Status": "Unpaid"
-    },
-    {
-      "Year": 2024,
-      "Amount": 4000,
-      "Paid": 4000,
-      "Status": "paid"
-    },
-    {
-      "Year": 2023,
-      "Amount": 4000,
-      "Paid": 1000,
-      "Status": "Unpaid"
-    },
-    {
-      "Year": 2024,
-      "Amount": 4000,
-      "Paid": 3000,
-      "Status": "Unpaid"
-    },
+  // const tableData = [
+  //   {
+  //     "Year": 2023,
+  //     "Amount": 4000,
+  //     "Paid": 2000,
+  //     "Status": "Unpaid"
+  //   },
+  //   {
+  //     "Year": 2024,
+  //     "Amount": 4000,
+  //     "Paid": 4000,
+  //     "Status": "paid"
+  //   },
+  //   {
+  //     "Year": 2023,
+  //     "Amount": 4000,
+  //     "Paid": 1000,
+  //     "Status": "Unpaid"
+  //   },
+  //   {
+  //     "Year": 2024,
+  //     "Amount": 4000,
+  //     "Paid": 3000,
+  //     "Status": "Unpaid"
+  //   },
     
-  ];
+  // ];
+
   const dummyDataArray = [
     {
       "id":1,
@@ -56,7 +58,9 @@ export default function Subscription() {
       "Year" : 2024,
       "Amount" : 5000,
       "C_status" : "paid",
+      "paiddate" : "01-01-2024",
       "paid":5000,
+      "paymentmethod":"Gpay",
       "Arrear" : {
         "year":2023,
         "Amount":1000,
@@ -95,7 +99,7 @@ export default function Subscription() {
 
     }
   ]
-  const showHistoryData = dummyDataArray.find((item)=>item.id == formated.id)
+  const showHistoryData = dummyDataArray.find((item)=>item.id === formated.id)
 
   const onhideDetails = (id) =>{
     setFormated({
@@ -127,7 +131,7 @@ export default function Subscription() {
   console.log(formated.id,"data get")
   
   const setShowHistory = (id) =>{
-    const showHistoryData1 = dummyDataArray.find((item)=>item.id == id)
+    const showHistoryData1 = dummyDataArray.find((item)=>item.id === id)
     setFormated({historyData:[showHistoryData1],historyShow:true})
     
   }
@@ -174,9 +178,9 @@ export default function Subscription() {
 
         {/* Section */}
           <Container fluid className="py-3">
-            <h3 className="text-center text-dark fw-bold">Subscription Modal</h3>
+            <h3 className="text-center text-white fw-bold">Subscription Modal</h3>
             <Row className="d-flex justify-content-end">
-              <Col lg={3} md={4} sm={12}>
+              <Col lg={4} md={4} sm={8}>
                 <InputGroup  className="my-2">
                   <InputGroup.Text id="basic-addon1">
                   <FontAwesomeIcon icon={faSearch} />
@@ -184,10 +188,14 @@ export default function Subscription() {
                   <Form.Control type="text" placeholder="Search" />
                 </InputGroup>
               </Col>
-              <Col lg={9} md={8} sm={12} className="d-flex justify-content-end my-2 ">
+              <Col lg={2} md={2} sm={4} className="my-2">
+              <Button variant="primary" className=""><i className="fa fa-download"></i> Download</Button>
+              </Col>
+              <Col lg={6} md={6} sm={12} className="d-flex justify-content-end my-2 ">
                 <Dropdown className="mx-2">
                   <Dropdown.Toggle variant="info">Degree</Dropdown.Toggle>
                   <Dropdown.Menu>
+                    <Dropdown.Item>All</Dropdown.Item>
                     <Dropdown.Item>Craft</Dropdown.Item>
                     <Dropdown.Item>Chapter</Dropdown.Item>
                     <Dropdown.Item>Mark</Dropdown.Item>
@@ -198,9 +206,17 @@ export default function Subscription() {
                 <Dropdown className="mx-2">
                   <Dropdown.Toggle variant="info">Year</Dropdown.Toggle>
                   <Dropdown.Menu>
+                    <Dropdown.Item>All</Dropdown.Item>
                     <Dropdown.Item>2023</Dropdown.Item>
-                    <Dropdown.Item>2023-24</Dropdown.Item>
                     <Dropdown.Item>2024</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+                <Dropdown className="mx-2">
+                  <Dropdown.Toggle variant="info">Payment</Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item>All</Dropdown.Item>
+                    <Dropdown.Item>Paid</Dropdown.Item>
+                    <Dropdown.Item>Unpaid</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               </Col>
@@ -220,7 +236,7 @@ export default function Subscription() {
                     <th>Arrear</th>
                     <th>A.Status</th>
                     <th>History</th>
-                    {/* <th>Action</th> */}
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody className="table-light">
@@ -235,60 +251,80 @@ export default function Subscription() {
                       <td>{data.C_status}</td>
                       <td>{data.Arrear.Amount}</td>
                       <td>{data.Arrear.A_status}</td>
-                      <td><FontAwesomeIcon icon={faEye} className="text-info" onClick={()=>setShowHistory(data.id)} style={{ cursor: 'pointer' }} /></td>
-
+                      <td><FontAwesomeIcon icon={faEye} className="text-primary" onClick={()=>setShowHistory(data.id)} style={{ cursor: 'pointer' }} /></td>
+                      <td><Button variant="info"><FontAwesomeIcon icon={faEdit} className="" style={{ cursor: 'pointer' }} />Edit</Button></td>
                       {/* History Modal start */}
 
-                      <Modal show={formated.historyShow} onHide={()=>setFormated({historyShow:false})} backdrop="" keyboard={false} centered scrollable className="shadow-lg"  size={"lg"}>
+                      <Draggable  >
+                        <Modal show={formated.historyShow} onHide={()=>setFormated({historyShow:false})} backdrop="" keyboard={false} centered scrollable className="shadow-lg "  size={"lg"}>
                         <Modal.Header   closeButton>
-                          <Modal.Title>History</Modal.Title>
+                          <Modal.Title>
+                            History 
+                          </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
+                        {formated?.historyData?.map((data,index)=>(
+                          <React.Fragment key={index}>
+                            <div className="d-flex justify-content-between mx-3 text-size">
+                              <p><span className="fw-bold ">RGLSI Id</span> : {data?.RGLSI}</p>
+                              <p><span className="fw-bold ">Name</span> : {data?.Member_Name}</p>
+                              <p><span className="fw-bold ">Degree</span> : {data?.Degree}</p>
+                            </div>
                             <Table borderless className="text-nowrap text-center">
                               <thead className="table-secondary">
                                 <td>Si.No</td>
                                 <td>Year</td>
                                 <td>Amount</td>
                                 <td>Paid</td>
+                                <td>Paid Date</td>
+                                <td>Payment Type</td>
                                 <td>Status</td>
                                 <td>Pay</td>
+                                <td>Action</td>
                               </thead>
                               <tbody className="table-light">
-                                {formated?.historyData?.map((data,index)=>(
-                                  <React.Fragment key={index}>
+                                
                                   <tr>
                                     <td>{index * 2 + 1}</td>
                                     <td>{data?.Year}</td>
                                     <td>{data?.Amount}</td>
                                     <td>{data?.paid ? data?.paid : 0}</td>
-                                    <td>{data?.C_status}</td>
-                                    <td>{data?.C_status == "Unpaid" ? <Button variant="primary" className="" onClick={()=>onhideDetails(data.id) } data-bs-theme="custom-theme"><i className="fa fa-credit-card"></i> Pay</Button> : <Button variant="info" className=""><i className="fa fa-download"></i> Download</Button>}</td>
+                                    <td>{data?.paiddate ? data?.paiddate : "00-00-0000"}</td>
+                                    <td>{data?.paymentmethod ? data?.paymentmethod : "None"}</td>
+                                    <td>{data?.C_status === "paid" ? <Button variant="success" data-bs-theme="custom-theme"> Paid</Button> : <Button variant="danger">Unpaid</Button>}</td>
+                                    <td>{data?.C_status === "Unpaid" ? <Button variant="success" className="" onClick={()=>onhideDetails(data.id) } data-bs-theme="custom-theme"><i className="fa fa-credit-card"></i> Pay</Button> : <Button variant="primary" className=""><i className="fa fa-download"></i> Download</Button>}</td>
+                                    <td><Button variant="info"><FontAwesomeIcon icon={faEdit} className="" style={{ cursor: 'pointer' }} />Edit</Button></td>
+
                                   </tr>
                                   <tr>
                                     <td>{index * 2 + 2}</td>
                                     <td>{data?.Arrear.year}</td>
                                     <td>{data?.Arrear.Amount}</td>
                                     <td>{data?.Arrear.paid ? data?.Arrear.paid : 0}</td>
-                                    <td>{data?.Arrear.A_status}</td>
-                                    <td>{data?.Arrear.A_status == "Unpaid" ? <Button variant="primary" className="" onClick={()=>onhideDetails(data.id)} data-bs-theme="custom-theme"><i className="fa fa-credit-card"></i> Pay</Button> : <Button variant="info" className=""><i className="fa fa-download"></i> Download</Button>}</td>
+                                    <td>{data?.Arrear.paiddate ? data?.Arrear.paiddate : "00-00-0000"}</td>
+                                    <td>{data?.Arrear.paymentmethod ? data?.Arrear.paymentmethod : "None"}</td>
+                                    <td>{data?.Arrear.A_status === "paid" ? <Button variant="success" className="" data-bs-theme="custom-theme">Paid</Button> : <Button variant="danger" className=""> Unpaid</Button>}</td>
+                                    <td>{data?.Arrear.A_status === "Unpaid" ? <Button variant="success" className="" onClick={()=>onhideDetails(data.id)} data-bs-theme="custom-theme"><i className="fa fa-credit-card"></i> Pay</Button> : <Button variant="primary" className=""><i className="fa fa-download"></i> Download</Button>}</td>
+                                    <td><Button variant="info"><FontAwesomeIcon icon={faEdit} className="" style={{ cursor: 'pointer' }} />Edit</Button></td>
                                   </tr>
-                                  <tr className="fw-bold">
+                                  <tr className="fw-bold table-warning">
                                     <td colSpan={5} className="text-end">Total</td>
-                                    <td>{data?.Amount + data?.Arrear.Amount}</td>
+                                    <td colSpan={4} className="text-start">{data?.Amount + data?.Arrear.Amount}</td>
                                   </tr>
-                                  <tr  className="fw-bold">
+                                  <tr  className="fw-bold table-secondary">
                                     <td colSpan={5} className="text-end">Paid</td>
-                                    <td>{ data?.paid + (data?.Arrear.paid || 0) || 0}</td>
+                                    <td colSpan={4} className="text-start">{ data?.paid + (data?.Arrear.paid || 0) || 0}</td>
                                   </tr>
-                                  <tr  className="fw-bold">
+                                  <tr  className="fw-bold table-info">
                                     <td colSpan={5} className="text-end">Balance</td>
-                                    <td>{(data?.Amount + data?.Arrear.Amount ) - (data.paid + (data.Arrear.paid || 0)) || data.Amount + data?.Arrear.Amount }</td>
+                                    <td colSpan={4} className="text-start">{(data?.Amount + data?.Arrear.Amount ) - (data.paid + (data.Arrear.paid || 0)) || data.Amount + data?.Arrear.Amount }</td>
                                   </tr>
-                                </React.Fragment>
-                                 ))} 
                                 
                               </tbody>
                             </Table>
+                          </React.Fragment>
+                          ))} 
+
                         </Modal.Body>
                         <Modal.Footer>
                           <Button variant="danger" onClick={()=>setFormated({historyShow:false})}>
@@ -296,6 +332,7 @@ export default function Subscription() {
                           </Button>
                         </Modal.Footer>
                       </Modal>
+                      </Draggable>
 
                       {/* view Modal end */}
 
