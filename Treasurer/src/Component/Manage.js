@@ -1,13 +1,27 @@
-import React, { useState } from "react";
-import { Button, Col, Container, Form, InputGroup, Modal, Nav, Row, Table } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Container, Dropdown, Form, InputGroup, Modal, Nav, Row, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit,faRightFromBracket, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/style.css";
+import { useDispatch, useSelector } from "react-redux";
+import { deletethedata } from "../Redux/Slice/treasurerSlice";
+import { getMasterDegree, treasurerCredntialsc } from "../Redux/Slice/treasurerActions";
+import Logout from "./Logout";
 
 export default function Manage() {
+
   const navigate = useNavigate();
-  const [formated, setFormated] = useState({ show: false, collapse: false });
+  const checkCredentials = JSON.parse(localStorage.getItem("cerdentials"))
+  const {treasurerState} = useSelector((state)=>state.Treasurer);
+  const dispatch = useDispatch();
+
+  const [formated, setFormated] = useState({ 
+    show: false, 
+    collapse: false ,
+    credentials : [],
+
+  });
 
   const handleModalToggle = () => setFormated({ ...formated, show: !formated.show });
 
@@ -18,10 +32,10 @@ export default function Manage() {
       "Title": "Comp",
       "Member_Name": "Ajay Virmani",
       "DOB": "02-09-1955",
-      "Sts_Dt.": "Ex",
-      "Sts_Type": "09/08/2005",
-      "Master": "P.II.R.GR./20145",
-      "R_G_Rank": "P.PRES.COM",
+      "Sts_Dt": "09/08/2005",
+      "Sts_Type": "Ex",
+      "Master": "P.PRES.COM",
+      "R_G_Rank": "P.II.R.GR./20145",
       "GRank": "P.PRES.COM",
       "Mobile": 8978798900,
       "Email": "ajay@gmail.com",
@@ -33,10 +47,10 @@ export default function Manage() {
       "Title": "Engineer",
       "Member_Name": "John Doe",
       "DOB": "05-15-1980",
-      "Sts_Dt.": "Active",
-      "Sts_Type": "01/20/2010",
-      "Master": "P.II.R.GR./54321",
-      "R_G_Rank": "Sr. Engineer",
+      "Sts_Dt": "01/20/2010",
+      "Sts_Type":"Active",
+      "Master":"Sr. Engineer",
+      "R_G_Rank":  "P.II.R.GR./54321",
       "GRank": "Sr. Engineer",
       "Mobile": 9876543210,
       "Email": "john.doe@example.com",
@@ -48,10 +62,10 @@ export default function Manage() {
       "Title": "Manager",
       "Member_Name": "Jane Smith",
       "DOB": "08-20-1975",
-      "Sts_Dt.": "Active",
-      "Sts_Type": "03/15/2008",
-      "Master": "P.II.R.GR./98765",
-      "R_G_Rank": "General Manager",
+      "Sts_Dt": "03/15/2008",
+      "Sts_Type": "Active",
+      "Master": "General Manager",
+      "R_G_Rank": "P.II.R.GR./98765",
       "GRank": "General Manager",
       "Mobile": 8765432109,
       "Email": "jane.smith@example.com",
@@ -63,10 +77,10 @@ export default function Manage() {
       "Title": "Analyst",
       "Member_Name": "Alice Johnson",
       "DOB": "12-10-1992",
-      "Sts_Dt.": "Active",
-      "Sts_Type": "05/25/2015",
-      "Master": "P.II.R.GR./87654",
-      "R_G_Rank": "Senior Analyst",
+      "Sts_Dt": "05/25/2015",
+      "Sts_Type": "Active",
+      "Master": "Senior Analyst",
+      "R_G_Rank": "P.II.R.GR./87654",
       "GRank": "Senior Analyst",
       "Mobile": 7654321098,
       "Email": "alice.johnson@example.com",
@@ -78,10 +92,10 @@ export default function Manage() {
       "Title": "Designer",
       "Member_Name": "Bob Williams",
       "DOB": "03-05-1988",
-      "Sts_Dt.": "Active",
-      "Sts_Type": "09/12/2012",
-      "Master": "P.II.R.GR./54321",
-      "R_G_Rank": "Lead Designer",
+      "Sts_Dt": "09/12/2012",
+      "Sts_Type": "Active",
+      "Master": "Lead Designer",
+      "R_G_Rank": "P.II.R.GR./54321",
       "GRank": "Lead Designer",
       "Mobile": 6543210987,
       "Email": "bob.williams@example.com",
@@ -93,10 +107,10 @@ export default function Manage() {
       "Title": "Salesperson",
       "Member_Name": "Sara Davis",
       "DOB": "06-18-1977",
-      "Sts_Dt.": "Active",
-      "Sts_Type": "07/30/2011",
-      "Master": "P.II.R.GR./87654",
-      "R_G_Rank": "Sales Manager",
+      "Sts_Dt":  "07/30/2011",
+      "Sts_Type":"Active",
+      "Master": "Sales Manager",
+      "R_G_Rank": "P.II.R.GR./87654",
       "GRank": "Sales Manager",
       "Mobile": 5432109876,
       "Email": "sara.davis@example.com",
@@ -108,10 +122,10 @@ export default function Manage() {
       "Title": "Technician",
       "Member_Name": "Mike Brown",
       "DOB": "09-28-1985",
-      "Sts_Dt.": "Active",
-      "Sts_Type": "02/15/2013",
-      "Master": "P.II.R.GR./76543",
-      "R_G_Rank": "Lead Technician",
+      "Sts_Dt": "02/15/2013",
+      "Sts_Type": "Active",
+      "Master":  "Lead Technician",
+      "R_G_Rank":"P.II.R.GR./76543",
       "GRank": "Lead Technician",
       "Mobile": 4321098765,
       "Email": "mike.brown@example.com",
@@ -123,10 +137,10 @@ export default function Manage() {
       "Title": "Administrator",
       "Member_Name": "Emily Wilson",
       "DOB": "04-12-1990",
-      "Sts_Dt.": "Active",
-      "Sts_Type": "11/05/2016",
-      "Master": "P.II.R.GR./24680",
-      "R_G_Rank": "System Administrator",
+      "Sts_Dt": "11/05/2016" ,
+      "Sts_Type":"Active",
+      "Master": "System Administrator",
+      "R_G_Rank": "P.II.R.GR./24680",
       "GRank": "System Administrator",
       "Mobile": 9876543210,
       "Email": "emily.wilson@example.com",
@@ -135,6 +149,28 @@ export default function Manage() {
     // Add 2 more objects with similar structure and different values
     // ...
   ];
+
+  // const handleLogout = (e) =>{
+  //   e.preventDefault();
+  //   localStorage.removeItem("cerdentials")
+  //   navigate("/",{replace:true})
+  //   dispatch(deletethedata())
+  // }
+
+  const logout = (data) =>{
+    setFormated({show:data})
+
+  }
+
+  useEffect(()=>{
+    if(!checkCredentials){
+      navigate('/')
+    }else{
+      // navigate('/')
+    }
+    dispatch(treasurerCredntialsc())
+    dispatch(getMasterDegree())
+  },[])
 
   return (
     <>
@@ -160,28 +196,17 @@ export default function Manage() {
               ))}
             </Nav>
             <div className="ms-2">
-              <img src={require('../assets/images/icon/user_552721.png')} width={'40px'} height={'40px'} onClick={handleModalToggle} style={{ cursor: 'pointer' }} alt="user icon" />
-            </div>
-              <Modal show={formated.show} onHide={handleModalToggle} backdrop="static" keyboard={false} centered>
-                <Modal.Header closeButton>
-                  <Modal.Title>Modal title</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <p>Username: Aarsan V</p>
-                  <p>Password: ********</p>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="outline-danger" onClick={()=>navigate('/')}>Logout <FontAwesomeIcon icon={faRightFromBracket} /></Button>
-                </Modal.Footer>
-              </Modal>
+                <img src={require('../assets/images/icon/user_552721.png')} width={'40px'} height={'40px'} onClick={() => setFormated({ show: true})} style={{ cursor: 'pointer' }} alt="user icon" />
+              </div>
+              {formated.show && <Logout logout={logout}/>}
           </Col>
         </Row>
 
         {/* Section */}
           <Container fluid className="py-3">
-            <h3 className="text-center text-white fw-bold">Manage Members</h3>
+            <h3 className="text-center text-dark fw-bold">Manage Members</h3>
             <Row>
-              <Col lg={3} md={3} xs={8} sm={6} className="my-2">
+              <Col lg={3} md={3} xs={8} sm={3} className="my-2">
                 <InputGroup className="">
                   <InputGroup.Text id="basic-addon1">
                   <FontAwesomeIcon icon={faSearch} />
@@ -189,10 +214,7 @@ export default function Manage() {
                   <Form.Control type="text" placeholder="Search"  className=""/>
                 </InputGroup>
               </Col>
-              <Col lg={2} md={2} sm={6} className="my-2">
-              <Button variant="primary" className=""><i className="fa fa-download"></i> Download</Button>
-              </Col>
-              <Col lg={7} md={7} sm={12} className="my-2 text-end">
+              <Col lg={9} md={9} sm={9} className="my-2 text-end">
                 <Button variant="primary" onClick={() => navigate('/add')} className=" text-nowrap">Add Member</Button>
               </Col>
             </Row>

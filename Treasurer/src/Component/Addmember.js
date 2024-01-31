@@ -1,10 +1,17 @@
-import React from "react";
+import React, {  useState } from "react";
 import { Button, Card, Col, Container, Form, FormGroup, InputGroup, Row, Stack } from "react-bootstrap";
 import "../assets/css/style.css";
 import { useNavigate } from "react-router-dom";
 
 export default function Addmember(){
 
+    const[formated, setFormated] = useState({
+        registerno : '',
+        title : '',
+        member_name : '',
+        dob:'',
+        
+    });
     const navigate = useNavigate()
 
     return(
