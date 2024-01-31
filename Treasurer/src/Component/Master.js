@@ -1,46 +1,89 @@
-import React, { useState } from "react";
-import { Button, Col, Container, Form, InputGroup, Modal, Nav, Row, Table } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Container, Dropdown, Form, InputGroup, Modal, Nav, NavDropdown, Navbar, Row, Stack, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRightFromBracket, faEdit, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {  faRightFromBracket, faEdit, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/style.css";
+import { useDispatch, useSelector } from "react-redux";
+import { deletethedata,  selectTheData } from "../Redux/Slice/treasurerSlice";
+import {  getMasterDegree, treasurerCredntialsc, updateMasterDegree } from "../Redux/Slice/treasurerActions";
+import Logout from "./Logout";
 
 
 export default function Master() {
 
   const navigate = useNavigate();
-
+  const checkCredentials = JSON.parse(localStorage.getItem("cerdentials"))
+  const {treasurerState,masterDegree,selected} = useSelector((state)=>state.Treasurer);
+  const dispatch = useDispatch();
   const [formated, setFormated] = useState({ 
-    show: false 
+    show: false ,
+    search : '',
+    editTable : false
   });
+  const [id, setId] = useState()
+  const [amount, setAmount] = useState()
+  const [degree, setDegree] = useState()
+  const [year, setYear] = useState()
+  
+  const searchTerm = new RegExp(formated?.search, 'i');
+  const filteredMasterDegree = masterDegree.filter((data) =>
+    searchTerm.test(data.degree)
+  );
 
-  const master = [
-    {
-    "degeree":"Craft",
-    "Amount":"4000",
-    "Year":"2024"
-  },
-  {
-    "degeree":"Chapter",
-    "Amount":"1000",
-    "Year":"2024"
-  },
-  {
-    "degeree":"Mark",
-    "Amount":"1000",
-    "Year":"2024"
-  },
-  {
-    "degeree":"RAM",
-    "Amount":"1000",
-    "Year":"2024"
-  },
-  {
-    "degeree":"Conclave",
-    "Amount":"2000",
-    "Year":"2024"
+  const handleEdit = (id) =>{
+      dispatch(selectTheData(id))
+      setFormated({editTable: true})
   }
-]
+
+
+// const handleLogout = (e) =>{
+//   e.preventDefault();
+//   localStorage.removeItem("cerdentials")
+//   navigate("/",{replace:true})
+//   dispatch(deletethedata())
+// }
+
+const handleupdate =(e)=>{
+  e.preventDefault();
+
+  // Use this for php server
+  const data = new FormData()
+  data.append('id',id)
+  data.append('degree',degree)
+  data.append('amount',amount)
+  data.append('year',year)
+
+  // const data = {
+  //     username : username,
+  //     password :password
+  // }
+  
+  dispatch(updateMasterDegree(data))
+  setFormated({editTable:false})
+
+}
+const logout = (data) =>{
+  setFormated({logout:data})
+
+}
+
+
+useEffect(()=>{
+  if(!checkCredentials){
+    navigate('/')
+  }else{
+    // navigate('/')
+  }
+      setId(selected.id)
+      setAmount(selected.amount)
+      setDegree(selected.degree)
+      setYear(selected.year)
+    
+  dispatch(treasurerCredntialsc())
+  dispatch(getMasterDegree())
+  
+},[treasurerCredntialsc,getMasterDegree,selected,updateMasterDegree])
 
   return (
     <>
@@ -66,32 +109,22 @@ export default function Master() {
                 ))}
               </Nav>
               <div className="ms-2">
-                <img src={require('../assets/images/icon/user_552721.png')} width={'40px'} height={'40px'} onClick={() => setFormated({ show: true })} style={{ cursor: 'pointer' }} alt="user icon" />
+                <img src={require('../assets/images/icon/user_552721.png')} width={'40px'} height={'40px'} onClick={() => setFormated({ show: true})} style={{ cursor: 'pointer' }} alt="user icon" />
               </div>
-              <Modal show={formated.show} onHide={() => setFormated({ show: false })} backdrop="static" keyboard={false} centered>
-                <Modal.Header closeButton>
-                  <Modal.Title>Modal title</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <p>Username: Aarsan V</p>
-                  <p>Password: ********</p>
-                </Modal.Body>
-                <Modal.Footer>
-                <Button variant="outline-danger" onClick={()=>navigate('/')}>Logout <FontAwesomeIcon icon={faRightFromBracket} /></Button>                </Modal.Footer>
-              </Modal>
+              {formated.show && <Logout logout={logout}/>}
             </Col>
           </Row>
 
         {/* Section */}
           <Container fluid className="py-3 ">
-            <h3 className="text-center text-white fw-bold">Degree Master</h3>
+            <h3 className="text-center text-light fw-bold">Degree Master</h3>
             <div className="d-flex justify-content-end">
               <Col lg={3} md={4} sm={12}>
                 <InputGroup  className="mb-3">
                   <InputGroup.Text id="basic-addon1">
                     <FontAwesomeIcon icon={faSearch} />
                   </InputGroup.Text>
-                  <Form.Control type="text" placeholder="Search" />
+                  <Form.Control type="text" placeholder="Search" onChange={(e)=>setFormated({search:e.target.value})}/>
                 </InputGroup>
               </Col>
             </div>
@@ -100,26 +133,55 @@ export default function Master() {
                 <thead className="table-info  position-sticky top-0">
                   <tr className="">
                       <th>SI.NO</th>
-                      <th>Year</th>
                       <th>Degree</th>
                       <th>Amount</th>
+                      <th>Year</th>
                       <th>Action</th>
                       {/* <th>Action</th> */}
                     </tr>
                   </thead>
                   <tbody className="table-light">
-                    {master.map((data,index) => (
+                    {Array.isArray(filteredMasterDegree) > 0 && filteredMasterDegree.map((data,index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
-                        <td>{data?.Year}</td>
-                        <td>{data?.degeree}</td>
-                        <td>{data?.Amount}</td>
-                        {/* <td>{[
-                          {name:"Edit",icon:faEdit,color:"outline-primary"},
-                          {name:"Delete",icon:faTrash,color:"outline-danger"}].map((data)=>(
-                          <Button key={index} variant={data.color} className="mx-2 rounded-circle"><FontAwesomeIcon icon={data.icon}/>{data.name}</Button>
-                        ))}</td> */}
-                        <td><Button variant="outline-info" className="mx-2 rounded-circle fw-bold"><FontAwesomeIcon icon={faEdit}/>Edit</Button></td>
+                        <td>{data?.degree}</td>
+                        <td>{data?.amount}</td>
+                        <td>{data?.year}</td>
+                        <td><Button variant="outline-info" onClick={()=>handleEdit(data?.id)} className="mx-2 rounded-circle fw-bold"><FontAwesomeIcon icon={faEdit}/>Edit</Button></td>
+                        
+                        {/* Modal to edit data in the table */}
+                        <Modal show={formated.editTable} onHide={()=>setFormated({editTable:false})} backdrop="" keyboard={false} centered scrollable className="shadow-lg"  >
+                        <Modal.Header   closeButton>
+                          <Modal.Title>History</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                              <Form>
+                                <Stack gap={3}> 
+                                  <InputGroup>
+                                    <InputGroup.Text className="padding-1">Degree</InputGroup.Text>
+                                    <Form.Control type="text" value={degree} onChange={(e)=>setDegree(e.target.value)}/>
+                                  </InputGroup>
+                                  <InputGroup>
+                                    <InputGroup.Text className="padding-2">Amount</InputGroup.Text>
+                                    <Form.Control type="text" value={amount} onChange={(e)=>setAmount(e.target.value)}/>
+                                  </InputGroup>
+                                  <InputGroup>
+                                    <InputGroup.Text className="padding-3">Year</InputGroup.Text>
+                                    <Form.Control type="text" value={year} onChange={(e)=>setYear(e.target.value)}/>
+                                  </InputGroup>
+                                </Stack>
+                              </Form>
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="danger" onClick={()=>setFormated({editTable:false})}>
+                            Close
+                          </Button>
+                          <Button variant="primary" onClick={handleupdate}>
+                            Update
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
+
                       </tr>
                     ))}
                   </tbody>

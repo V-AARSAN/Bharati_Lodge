@@ -92,12 +92,20 @@
 .transparency{
     background-color: #ffffffb7;
 }
-
-.text-size{
-    font-size: 18px;
+/* 
+.toast {
+   background: rgb(255, 0, 0);
+   
 }
 
-.nocss {
-    position: absolute;
-    transform: translate(0, 0);
-  }
+.toast-header{
+    
+} */
+
+.padding-1 {
+    padding: 0 16px;
+}
+
+.padding-3 {
+    padding: 0 26px;
+}
