@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Dropdown, Form, InputGroup, Modal, Nav, NavDropdown, Navbar, Row, Stack, Table } from "react-bootstrap";
+import { Button, Col, Container,  Form, InputGroup, Modal, Nav, Row, Stack, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {  faRightFromBracket, faEdit, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {  faEdit, faFile, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/style.css";
 import { useDispatch, useSelector } from "react-redux";
-import { deletethedata,  selectTheData } from "../Redux/Slice/treasurerSlice";
+import treasurerSlice, {selectTheDegree } from "../Redux/Slice/treasurerSlice";
 import {  getMasterDegree, treasurerCredntialsc, updateMasterDegree } from "../Redux/Slice/treasurerActions";
 import Logout from "./Logout";
 
@@ -14,7 +14,7 @@ export default function Master() {
 
   const navigate = useNavigate();
   const checkCredentials = JSON.parse(localStorage.getItem("cerdentials"))
-  const {treasurerState,masterDegree,selected} = useSelector((state)=>state.Treasurer);
+  const {masterDegree,selectDegree} = useSelector((state)=>state.Treasurer || []);
   const dispatch = useDispatch();
   const [formated, setFormated] = useState({ 
     show: false ,
@@ -27,64 +27,55 @@ export default function Master() {
   const [year, setYear] = useState()
   
   const searchTerm = new RegExp(formated?.search, 'i');
-  const filteredMasterDegree = masterDegree.filter((data) =>
-    searchTerm.test(data.degree)
+  const checkIsArray = Array.isArray(masterDegree) ? masterDegree : [];
+  const filteredMasterDegree = checkIsArray.filter((data) =>
+    searchTerm.test(data.degree) || searchTerm.test(data.amount) || searchTerm.test(data.year)
   );
 
   const handleEdit = (id) =>{
-      dispatch(selectTheData(id))
+      dispatch(selectTheDegree(id))
       setFormated({editTable: true})
   }
 
+  const handleupdate =(e)=>{
 
-// const handleLogout = (e) =>{
-//   e.preventDefault();
-//   localStorage.removeItem("cerdentials")
-//   navigate("/",{replace:true})
-//   dispatch(deletethedata())
-// }
+    // Use this for php server
+    const data = new FormData()
+    data.append('id',id)
+    data.append('degree',degree)
+    data.append('amount',amount)
+    data.append('year',year)
 
-const handleupdate =(e)=>{
-  e.preventDefault();
-
-  // Use this for php server
-  const data = new FormData()
-  data.append('id',id)
-  data.append('degree',degree)
-  data.append('amount',amount)
-  data.append('year',year)
-
-  // const data = {
-  //     username : username,
-  //     password :password
-  // }
-  
-  dispatch(updateMasterDegree(data))
-  setFormated({editTable:false})
-
-}
-const logout = (data) =>{
-  setFormated({logout:data})
-
-}
-
-
-useEffect(()=>{
-  if(!checkCredentials){
-    navigate('/')
-  }else{
-    // navigate('/')
-  }
-      setId(selected.id)
-      setAmount(selected.amount)
-      setDegree(selected.degree)
-      setYear(selected.year)
+    // const data = {
+    //     username : username,
+    //     password :password
+    // }
     
-  dispatch(treasurerCredntialsc())
-  dispatch(getMasterDegree())
-  
-},[treasurerCredntialsc,getMasterDegree,selected,updateMasterDegree])
+    dispatch(updateMasterDegree(data))
 
+    setFormated(prevState => ({ ...prevState, search: '' })); 
+    setFormated({editTable:false})
+  }
+
+  const logout = (data) =>{
+    setFormated({logout:data})
+    }
+
+  useEffect(()=>{
+    if(!checkCredentials){
+      navigate('/')
+    }
+
+    setId(selectDegree.id)
+    setAmount(selectDegree.amount)
+    setDegree(selectDegree.degree)
+    setYear(selectDegree.year)
+    dispatch(treasurerCredntialsc())
+    dispatch(getMasterDegree())
+    
+  },[treasurerCredntialsc,selectDegree,updateMasterDegree,getMasterDegree])
+
+   const uniqueId = Math.random().toString(36).substring(7);
   return (
     <>
       <div id="master-bg" className="">
@@ -111,7 +102,7 @@ useEffect(()=>{
               <div className="ms-2">
                 <img src={require('../assets/images/icon/user_552721.png')} width={'40px'} height={'40px'} onClick={() => setFormated({ show: true})} style={{ cursor: 'pointer' }} alt="user icon" />
               </div>
-              {formated.show && <Logout logout={logout}/>}
+              {formated.show && <Logout  key={uniqueId} logout={logout}/>}
             </Col>
           </Row>
 
@@ -126,9 +117,10 @@ useEffect(()=>{
                   </InputGroup.Text>
                   <Form.Control type="text" placeholder="Search" onChange={(e)=>setFormated({search:e.target.value})}/>
                 </InputGroup>
+                
               </Col>
             </div>
-            <div className="table-container overflow-auto" style={{ height: '400px'}}  >
+            <div className="table-container overflow-auto" style={{ maxHeight: '450px'}}  >
               <Table  striped hover  className="text-center mb-0 shadow text-nowrap"   >
                 <thead className="table-info  position-sticky top-0">
                   <tr className="">
@@ -136,6 +128,7 @@ useEffect(()=>{
                       <th>Degree</th>
                       <th>Amount</th>
                       <th>Year</th>
+                      <th>Generate</th>
                       <th>Action</th>
                       {/* <th>Action</th> */}
                     </tr>
@@ -147,6 +140,7 @@ useEffect(()=>{
                         <td>{data?.degree}</td>
                         <td>{data?.amount}</td>
                         <td>{data?.year}</td>
+                        <td><Button variant="outline-primary" className="mx-2 rounded fw-bold"><FontAwesomeIcon icon={faFile} className=" px-1"/>Generate</Button></td>
                         <td><Button variant="outline-info" onClick={()=>handleEdit(data?.id)} className="mx-2 rounded-circle fw-bold"><FontAwesomeIcon icon={faEdit}/>Edit</Button></td>
                         
                         {/* Modal to edit data in the table */}
@@ -159,7 +153,7 @@ useEffect(()=>{
                                 <Stack gap={3}> 
                                   <InputGroup>
                                     <InputGroup.Text className="padding-1">Degree</InputGroup.Text>
-                                    <Form.Control type="text" value={degree} onChange={(e)=>setDegree(e.target.value)}/>
+                                    <Form.Control type="text" value={degree} onChange={(e)=>setDegree(e.target.value)} disabled/>
                                   </InputGroup>
                                   <InputGroup>
                                     <InputGroup.Text className="padding-2">Amount</InputGroup.Text>

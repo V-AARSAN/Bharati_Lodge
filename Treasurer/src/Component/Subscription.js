@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Dropdown, Form, FormGroup, InputGroup, Modal, Nav, Row, Stack, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEye, faEdit,faRightFromBracket, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { json, useNavigate } from "react-router-dom";
+import { faEye, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import "../assets/css/style.css";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getMasterDegree, treasurerCredntialsc } from "../Redux/Slice/treasurerActions";
-import { deletethedata } from "../Redux/Slice/treasurerSlice";
 import Logout from "./Logout";
 
 
@@ -15,7 +13,7 @@ export default function Subscription() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {treasurerState} = useSelector((state)=>state.Treasurer);
+  // const {treasurerState} = useSelector((state)=>state.Treasurer);
   const [formated, setFormated] = useState({ 
     show: false ,
     historyShow: false,
@@ -27,33 +25,33 @@ export default function Subscription() {
 
   const checkCredentials = JSON.parse(localStorage.getItem("cerdentials"))
   
-  const tableData = [
-    {
-      "Year": 2023,
-      "Amount": 4000,
-      "Paid": 2000,
-      "Status": "Unpaid"
-    },
-    {
-      "Year": 2024,
-      "Amount": 4000,
-      "Paid": 4000,
-      "Status": "paid"
-    },
-    {
-      "Year": 2023,
-      "Amount": 4000,
-      "Paid": 1000,
-      "Status": "Unpaid"
-    },
-    {
-      "Year": 2024,
-      "Amount": 4000,
-      "Paid": 3000,
-      "Status": "Unpaid"
-    },
+  // const tableData = [
+  //   {
+  //     "Year": 2023,
+  //     "Amount": 4000,
+  //     "Paid": 2000,
+  //     "Status": "Unpaid"
+  //   },
+  //   {
+  //     "Year": 2024,
+  //     "Amount": 4000,
+  //     "Paid": 4000,
+  //     "Status": "paid"
+  //   },
+  //   {
+  //     "Year": 2023,
+  //     "Amount": 4000,
+  //     "Paid": 1000,
+  //     "Status": "Unpaid"
+  //   },
+  //   {
+  //     "Year": 2024,
+  //     "Amount": 4000,
+  //     "Paid": 3000,
+  //     "Status": "Unpaid"
+  //   },
     
-  ];
+  // ];
   const dummyDataArray = [
     {
       "id":1,
@@ -103,7 +101,7 @@ export default function Subscription() {
 
     }
   ]
-  const showHistoryData = dummyDataArray.find((item)=>item.id == formated.id)
+  const showHistoryData = dummyDataArray.find((item)=>item.id === formated.id)
 
   const onhideDetails = (id) =>{
     setFormated({
@@ -132,16 +130,9 @@ export default function Subscription() {
   }
 
   const setShowHistory = (id) =>{
-    const showHistoryData1 = dummyDataArray.find((item)=>item.id == id)
+    const showHistoryData1 = dummyDataArray.find((item)=>item.id === id)
     setFormated({historyData:[showHistoryData1],historyShow:true})
     
-  }
-
-  const handleLogout = (e) =>{
-    e.preventDefault();
-    localStorage.removeItem("cerdentials")
-    navigate("/",{replace:true})
-    dispatch(deletethedata())
   }
 
   const logout = (data) =>{
@@ -152,12 +143,16 @@ export default function Subscription() {
   useEffect(()=>{
     if(!checkCredentials){
       navigate('/')
-    }else{
-      // navigate('/')
     }
+
     dispatch(treasurerCredntialsc())
     dispatch(getMasterDegree())
+
   },[treasurerCredntialsc,checkCredentials])
+
+  const filterDegree = (data)=>{
+    // const dummyDataArray = dumm
+  }
 
   return (
     <>
@@ -205,11 +200,13 @@ export default function Subscription() {
                 <Dropdown className="mx-2">
                   <Dropdown.Toggle variant="info">Degree</Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <Dropdown.Item>Craft</Dropdown.Item>
-                    <Dropdown.Item>Chapter</Dropdown.Item>
+                    {["Craft", "Chapter","Mark", "RAM" , "Conclave"].map((data,index)=>(
+                        <Dropdown.Item key={index} onClick={()=>filterDegree(data)}>{data}</Dropdown.Item>
+                    ))}
+                    {/* <Dropdown.Item>Chapter</Dropdown.Item>
                     <Dropdown.Item>Mark</Dropdown.Item>
                     <Dropdown.Item>RAM</Dropdown.Item>
-                    <Dropdown.Item>Conclave</Dropdown.Item>
+                    <Dropdown.Item>Conclave</Dropdown.Item> */}
                   </Dropdown.Menu>
                 </Dropdown>
                 <Dropdown className="mx-2">
@@ -223,7 +220,7 @@ export default function Subscription() {
               </Col>
             </Row>
             
-            <div className="table-container overflow-auto" style={{ height: '400px'}}  >
+            <div className="table-container overflow-auto" style={{maxHeight: '400px'}}  >
               <Table  striped hover  className="text-center mb-0 shadow text-nowrap"   >
                 <thead className="table-info  position-sticky top-0">
                   <tr>
@@ -279,7 +276,7 @@ export default function Subscription() {
                                     <td>{data?.Amount}</td>
                                     <td>{data?.paid ? data?.paid : 0}</td>
                                     <td>{data?.C_status}</td>
-                                    <td>{data?.C_status == "Unpaid" ? <Button variant="primary" className="" onClick={()=>onhideDetails(data.id) } data-bs-theme="custom-theme"><i className="fa fa-credit-card"></i> Pay</Button> : <Button variant="info" className=""><i className="fa fa-download"></i> Download</Button>}</td>
+                                    <td>{data?.C_status === "Unpaid" ? <Button variant="primary" className="" onClick={()=>onhideDetails(data.id) } data-bs-theme="custom-theme"><i className="fa fa-credit-card"></i> Pay</Button> : <Button variant="info" className=""><i className="fa fa-download"></i> Download</Button>}</td>
                                   </tr>
                                   <tr>
                                     <td>{index * 2 + 2}</td>
@@ -287,7 +284,7 @@ export default function Subscription() {
                                     <td>{data?.Arrear.Amount}</td>
                                     <td>{data?.Arrear.paid ? data?.Arrear.paid : 0}</td>
                                     <td>{data?.Arrear.A_status}</td>
-                                    <td>{data?.Arrear.A_status == "Unpaid" ? <Button variant="primary" className="" onClick={()=>onhideDetails(data.id)} data-bs-theme="custom-theme"><i className="fa fa-credit-card"></i> Pay</Button> : <Button variant="info" className=""><i className="fa fa-download"></i> Download</Button>}</td>
+                                    <td>{data?.Arrear.A_status === "Unpaid" ? <Button variant="primary" className="" onClick={()=>onhideDetails(data.id)} data-bs-theme="custom-theme"><i className="fa fa-credit-card"></i> Pay</Button> : <Button variant="info" className=""><i className="fa fa-download"></i> Download</Button>}</td>
                                   </tr>
                                   <tr className="fw-bold">
                                     <td colSpan={5} className="text-end">Total</td>

@@ -1,4 +1,3 @@
-import './App.css';
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {Provider} from "react-redux";
@@ -14,7 +13,7 @@ function App() {
   return (
     <React.StrictMode>
       <Provider store={Store}>
-          <BrowserRouter>
+          <BrowserRouter basename='bhartilodge/treasurer'>
             <Routes>
               <Route path='/' element={<Login/>} />
               <Route path='/subscription' element={<Subscription/>} />
